@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-function FileUpload() {
+const FileUpload = ({ onFileUpload }) => {
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState('');
 
@@ -21,14 +21,16 @@ function FileUpload() {
     formData.append('file', file);
 
     try {
-      await axios.post('http://localhost:5000/api/files/upload', formData, {
+      const response = await axios.post('http://localhost:5000/api/files/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
       setMessage('File uploaded successfully!');
+      onFileUpload(); // Notify parent to refresh file list
     } catch (error) {
       setMessage('Failed to upload the file.');
+      console.error(error);
     }
   };
 
@@ -47,9 +49,9 @@ function FileUpload() {
           Upload
         </button>
       </form>
-      {message && <p className="mt-4 text-red-500">{message}</p>}
+      {message && <p>{message}</p>}
     </div>
   );
-}
+};
 
 export default FileUpload;
